@@ -6,10 +6,17 @@ def parse_array():
         word = compiler.parse_word()
         if word == '}':
             break
-        number = parse_number(word)
-        if number is None:
-            raise Compiler.FATAL_ERROR, "%s: unrecognized number %s" % (compiler.current_location(), word)
-        data.append(number.value)
+        obj = compiler.find(word)
+        if obj is not None:
+            val =  obj.static_value()
+            if val is None:
+                raise Compiler.FATAL_ERROR, "%s: unrecognized value %s" % (compiler.current_location(), word)
+            data.append(val)
+        else:
+            number = parse_number(word)
+            if number is None:
+                raise Compiler.FATAL_ERROR, "%s: unrecognized number %s" % (compiler.current_location(), word)
+            data.append(number.value)
     return data
 
 def insert_data(data, kind):
