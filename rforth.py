@@ -2283,8 +2283,11 @@ class Compiler:
       x = Compiler._next_word.match(self.input_buffer)
       if x:
         word = x.group(2)
-        self.input_buffer = self.input_buffer[len(word)+len(x.group(1))+1:]
-        return word
+        if word == '\\':
+	  self.input_buffer = ''  # discard remainder of this line
+        else:
+          self.input_buffer = self.input_buffer[len(word)+len(x.group(1))+1:]
+          return word
       self.refill()
 
   def add_primitive(self, name, object_class):
